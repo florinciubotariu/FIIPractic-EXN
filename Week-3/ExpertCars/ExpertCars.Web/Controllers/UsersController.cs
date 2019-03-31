@@ -33,9 +33,12 @@ namespace ExpertCars.Web.Controllers
     }
 
     [HttpGet]
-    public IActionResult Create() => View(); //->https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
+    public IActionResult Create()
+    {
+      return View();
+    }//->https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
 
-    [HttpPost]
+    [HttpPost] 
     public IActionResult Create([FromForm]UserModel userModel) //->https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-2.2
     {
       if (userModel == null) throw new ArgumentNullException(nameof(userModel));
