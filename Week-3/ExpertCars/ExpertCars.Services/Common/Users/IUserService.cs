@@ -8,5 +8,7 @@ namespace ExpertCars.Services.Common.Users
     List<UserDto> GetUsers();
     void AddUser(CreateUserDto newUser);
     UserDto GetUserByEmail(string email);
+    UserDto GetUserById(int id);
+    void UpdateUser(UserDto userDto);
   }
 }

@@ -53,7 +53,6 @@ namespace ExpertCars.Services.Common.Users
       if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException(nameof(email));
 
       var user = userRepository.Query(x => x.Email.Equals(email)).FirstOrDefault();
-
       if (user == null) return null;
 
       var userDto = new UserDto
@@ -64,6 +63,39 @@ namespace ExpertCars.Services.Common.Users
         Name = user.Name
       };
       return userDto;
+    }
+
+    public UserDto GetUserById(int id)
+    {
+      if (id < 1) throw new ArgumentException(nameof(id));
+
+      var user = userRepository.Query(x => x.Id == id).FirstOrDefault();
+      if (user == null) return null;
+
+      var userDto = new UserDto
+      {
+        Id = user.Id,
+        Birthday = user.Birthday,
+        Email = user.Email,
+        Name = user.Name
+      };
+      return userDto;
+    }
+
+    public void UpdateUser(UserDto userDto)
+    {
+      if (userDto == null) throw new ArgumentNullException(nameof(userDto));
+
+      var user = userRepository.Query(x => x.Id == userDto.Id).FirstOrDefault();
+      if (user == null) return;
+
+      user.Name = userDto.Name;
+      user.Birthday = userDto.Birthday;
+      user.Email = userDto.Email;
+
+      userRepository.Update(user);
+
+      unitOfWork.Commit();
     }
   }
 }

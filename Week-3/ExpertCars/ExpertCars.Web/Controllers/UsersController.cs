@@ -38,7 +38,7 @@ namespace ExpertCars.Web.Controllers
       return View();
     }//->https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
 
-    [HttpPost] 
+    [HttpPost]
     public IActionResult Create([FromForm]UserModel userModel) //->https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-2.2
     {
       if (userModel == null) throw new ArgumentNullException(nameof(userModel));
@@ -54,6 +54,84 @@ namespace ExpertCars.Web.Controllers
       userService.AddUser(newUserDto);
 
       return RedirectToAction(nameof(Index)); //->https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase.redirecttoaction?view=aspnetcore-2.2
+    }
+
+    [HttpGet]
+    public IActionResult Details(int id)
+    {
+      if (id < 1) { }// ???
+
+      var userDto = userService.GetUserById(id);
+      if (userDto == null)
+      {
+        //redirect undeva. la 404
+        return RedirectToAction(nameof(Index));
+      }
+
+      var userModel = new UserModel();
+      userModel.InjectFrom(userDto);
+
+      return View(userModel);
+    }
+
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+      if (id < 1) { }
+
+      var userDto = userService.GetUserById(id);
+      if (userDto == null)
+      {
+        //redirect undeva. la 404
+        return RedirectToAction(nameof(Index));
+      }
+
+      var userModel = new UserModel();
+      userModel.InjectFrom(userDto);
+
+      return View(userModel);
+    }
+
+    [HttpPost]
+    public IActionResult Edit([FromForm] UserModel userModel)
+    {
+      if (userModel == null) throw new ArgumentNullException(nameof(userModel));
+      if (!ModelState.IsValid)
+      {
+        return View(userModel);
+      } //?->https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-2.2
+
+      var userDto = userService.GetUserById(userModel.Id);
+      if (userDto == null)
+      {
+        return RedirectToAction(nameof(Index));
+      }
+
+      userDto.Name = userModel.Name;
+      userDto.Birthday = userModel.Birthday;
+      userDto.Email = userModel.Email;
+
+      userService.UpdateUser(userDto);
+
+      return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public IActionResult Delete(int id)
+    {
+      if (id < 1) { }
+
+      var userDto = userService.GetUserById(id);
+      if (userDto == null)
+      {
+        //redirect undeva. la 404
+        return RedirectToAction(nameof(Index));
+      }
+
+      var userModel = new UserModel();
+      userModel.InjectFrom(userDto);
+
+      return View(userModel);
     }
   }
 }

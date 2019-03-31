@@ -49,8 +49,8 @@ namespace ExpertCars.Data.Infrastructure
 
     public void Update(T entity)
     {
-      _unitOfWork.Context.Entry(entity).State = EntityState.Modified;
       dbSet.Attach(entity);
+      _unitOfWork.Context.Entry(entity).State = EntityState.Modified;
     }
   }
 }
