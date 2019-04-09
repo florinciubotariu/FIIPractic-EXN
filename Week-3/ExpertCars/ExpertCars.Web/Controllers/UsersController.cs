@@ -2,9 +2,12 @@
 using ExpertCars.Services.Common.Users.Dto;
 using ExpertCars.Web.Models.Users;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Omu.ValueInjecter;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ExpertCars.Web.Controllers
 {
@@ -39,17 +42,26 @@ namespace ExpertCars.Web.Controllers
     }//->https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
 
     [HttpPost]
-    public IActionResult Create([FromForm]UserModel userModel) //->https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-2.2
+    public async Task<IActionResult> Create([FromForm]UserModel userModel) //->https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-2.2
     {
       if (userModel == null) throw new ArgumentNullException(nameof(userModel));
       if (!ModelState.IsValid) { } //?->https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-2.2
 
-      var newUserDto = new CreateUserDto
-      {
-        Name = userModel.Name,
-        Birthday = userModel.Birthday,
-        Email = userModel.Email
-      };
+
+      var connectionString = "connString";
+      CloudStorageAccount.TryParse(connectionString, out CloudStorageAccount storageAccount);
+      var blobStorage = storageAccount.CreateCloudBlobClient();
+      var blobContainer = blobStorage.GetContainerReference("avatars");
+      var blob = blobContainer.GetBlockBlobReference(userModel.Avatar.FileName);
+      await blob.UploadFromStreamAsync(userModel.Avatar.OpenReadStream());
+      var avataruri = blob.Uri;
+
+        var newUserDto = new CreateUserDto
+        {
+          Name = userModel.Name,
+          Birthday = userModel.Birthday,
+          Email = userModel.Email
+        };
 
       userService.AddUser(newUserDto);
 

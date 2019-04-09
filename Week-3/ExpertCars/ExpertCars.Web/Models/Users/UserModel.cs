@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ExpertCars.Web.Models.Users
@@ -14,5 +16,7 @@ namespace ExpertCars.Web.Models.Users
     [StringLength(30)]
     [EmailAddress]
     public string Email { get; set; }
+
+    public IFormFile Avatar { get; set; } 
   }
 }
